@@ -10,9 +10,6 @@ resource "aws_instance" "devopswiki-testbed-fe" {
     yaw_public_key     = var.yaw_public_key
     postgres_user      = var.postgres_user
     postgres_password  = var.postgres_password
-    # github_token       = var.github_token
-    # dockerhub_username = var.dockerhub_username
-    # dockerhub_password = var.dockerhub_password
   })
   tags = {
     Name = "DevOpsWiKi Testbed Frontend"
@@ -29,10 +26,6 @@ resource "aws_instance" "devopswiki-testbed-be" {
     yaw_public_key     = var.yaw_public_key
     postgres_user      = var.postgres_user
     postgres_password  = var.postgres_password
-    # github_token       = var.github_token
-    # dockerhub_username = var.dockerhub_username
-    # dockerhub_password = var.dockerhub_password
-
   })
   tags = {
     Name = "DevOpsWiKi Testbed Backend"
