@@ -30,10 +30,12 @@ if [ ! -f /etc/letsencrypt/live/test.devopswiki.info/fullchain.pem ]; then
   aws s3 cp /etc/letsencrypt s3://devopswiki-testbed-letsencrypt-8daccc39b5d2c2e9/letsencrypt --recursive
 fi
 
-# write env file
+# write env file for nginx
 mkdir -p /opt/app
 cat > /opt/app/.env <<ENVFILE
 BE_PRIVATE_IP=${be_private_ip}
+SERVER_NAME=test.devopswiki.info
+CERT_DOMAIN=test.devopswiki.info
 ENVFILE
 
 # install docker compose
