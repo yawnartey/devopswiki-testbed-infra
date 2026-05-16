@@ -8,7 +8,6 @@ chmod 700 /home/yaw/.ssh
 echo "${yaw_public_key}" > /home/yaw/.ssh/authorized_keys
 chmod 600 /home/yaw/.ssh/authorized_keys
 chown -R yaw:yaw /home/yaw/.ssh
-chown -R yaw:yaw /opt/app
 echo "yaw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/yaw
 chmod 440 /etc/sudoers.d/yaw
 
@@ -33,6 +32,7 @@ fi
 
 # write env file for nginx
 mkdir -p /opt/app
+chown -R yaw:yaw /opt/app
 cat > /opt/app/.env <<ENVFILE
 BE_PRIVATE_IP=${be_private_ip}
 SERVER_NAME=test.devopswiki.info
