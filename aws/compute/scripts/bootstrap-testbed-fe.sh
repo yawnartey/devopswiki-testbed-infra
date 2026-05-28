@@ -45,3 +45,41 @@ chmod +x /usr/local/bin/docker-compose
 
 # set up certbot auto-renewal
 echo "0 3 * * * certbot renew --quiet && /usr/local/bin/docker-compose -f /opt/app/docker-compose.yml restart frontend" | crontab -
+
+# disable swap and net sysctl for kubernetes networking 
+swapoff -a
+sed -i.bak '/ swap / s/^/#/' /etc/fstab
+modprobe br_netfilter
+cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+EOF
+sysctl --system
+
+# set selinux to permissive
+setenforce 0
+sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
+
+# install containerd
+yum install -y containerd
+mkdir -p /etc/containerd
+containerd config default > /etc/containerd/config.toml
+sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+systemctl restart containerd
+systemctl enable containerd
+
+# add kubernetes repo and install kubeadm, kubelet and kubectl
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+EOF
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+systemctl enable --now kubelet
+
+# join the cluster (done manually for now)
