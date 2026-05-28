@@ -46,15 +46,13 @@ module "iam" {
 module "compute" {
   source                       = "./compute"
   subnet_ids                   = module.networking.subnet_ids
+  testbed_cp_security_group_id = module.security_group.testbed_cp_security_group_id
   testbed_fe_security_group_id = module.security_group.testbed_fe_security_group_id
   testbed_be_security_group_id = module.security_group.testbed_be_security_group_id
   testbed_fe_instance_profile  = module.iam.testbed_fe_instance_profile_name
   yaw_public_key               = var.yaw_public_key
-  # github_token                 = var.github_token
   postgres_user                = var.postgres_user
   postgres_password            = var.postgres_password
-  # dockerhub_username           = var.dockerhub_username
-  # dockerhub_password           = var.dockerhub_password
 }
 
 # dns module

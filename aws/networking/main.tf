@@ -15,25 +15,36 @@ resource "aws_internet_gateway" "devopswiki-testbed-igw" {
   }
 }
 
-# frontend public subnet 
-resource "aws_subnet" "testbed-fe-subnet" {
+# control plane private subnet
+resource "aws_subnet" "testbed-cp-subnet" {
   vpc_id                  = aws_vpc.devopswiki-testbed-vpc.id
   cidr_block              = "10.0.1.0/24"
   availability_zone       = "eu-west-3a"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   tags = {
-    Name = "DevOpsWiKi Testbed FE Subnet"
+    Name = "DevOpsWiKi Testbed Control Plane Subnet"
   }
 }
 
-# backend private subnet
-resource "aws_subnet" "testbed-be-subnet" {
+# frontend worker node public subnet 
+resource "aws_subnet" "testbed-fe-subnet" {
   vpc_id                  = aws_vpc.devopswiki-testbed-vpc.id
   cidr_block              = "10.0.2.0/24"
-  availability_zone       = "eu-west-3a"
+  availability_zone       = "eu-west-3b"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "DevOpsWiKi Testbed FE Worker Node Subnet"
+  }
+}
+
+# backend worker node private subnet
+resource "aws_subnet" "testbed-be-subnet" {
+  vpc_id                  = aws_vpc.devopswiki-testbed-vpc.id
+  cidr_block              = "10.0.3.0/24"
+  availability_zone       = "eu-west-3c"
   map_public_ip_on_launch = false
   tags = {
-    Name = "DevOpsWiKi Testbed BE Subnet"
+    Name = "DevOpsWiKi Testbed BE Worker Node Subnet"
   }
 }
 
@@ -45,7 +56,7 @@ resource "aws_eip" "devopswiki-testbed-nat-eip" {
   }
 }
 
-# nat gateway - in testbed-fe-subnet for testbed-be-subnet outbound internet
+# nat gateway - in the public subnet for frontend worker node 
 resource "aws_nat_gateway" "devopswiki-testbed-nat" {
   allocation_id = aws_eip.devopswiki-testbed-nat-eip.id
   subnet_id     = aws_subnet.testbed-fe-subnet.id
@@ -62,30 +73,36 @@ resource "aws_route_table" "testbed-fe-route-table" {
     gateway_id = aws_internet_gateway.devopswiki-testbed-igw.id
   }
   tags = {
-    Name = "DevOpsWiKi Testbed FE RT"
+    Name = "DevOpsWiKi Testbed Control Plane Route Table"
   }
 }
 
-# private route table for testbed-be-subnet
-resource "aws_route_table" "testbed-be-route-table" {
+# private route table for control plane and backend worker nodes
+resource "aws_route_table" "testbed-ws-route-table" {
   vpc_id = aws_vpc.devopswiki-testbed-vpc.id
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.devopswiki-testbed-nat.id
   }
   tags = {
-    Name = "DevOpsWiKi Testbed BE RT"
+    Name = "DevOpsWiKi Testbed Control Plane & FE Worker node"
   }
 }
 
-# testbed-fe-subnet association to public route table
+# associate public route table to frontend public subnet
 resource "aws_route_table_association" "testbed-fe-rt-association" {
   subnet_id      = aws_subnet.testbed-fe-subnet.id
   route_table_id = aws_route_table.testbed-fe-route-table.id
 }
 
-# testbed-be-subnet association to private route table
+# associate control-plane subnet to private (NAT) route table
+resource "aws_route_table_association" "testbed-cp-rt-association" {
+  subnet_id      = aws_subnet.testbed-cp-subnet.id
+  route_table_id = aws_route_table.testbed-ws-route-table.id
+}
+
+# associate backend worker subnet to private route table
 resource "aws_route_table_association" "testbed-be-rt-association" {
   subnet_id      = aws_subnet.testbed-be-subnet.id
-  route_table_id = aws_route_table.testbed-be-route-table.id
+  route_table_id = aws_route_table.testbed-ws-route-table.id
 }

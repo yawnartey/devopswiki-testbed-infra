@@ -1,6 +1,9 @@
 variable "subnet_ids" {
   type = map(string)
 }
+variable "testbed_cp_security_group_id" {
+  type = string
+}
 variable "testbed_fe_security_group_id" {
   type = string
 }
