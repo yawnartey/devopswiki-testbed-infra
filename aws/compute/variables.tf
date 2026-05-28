@@ -10,7 +10,13 @@ variable "testbed_fe_security_group_id" {
 variable "testbed_be_security_group_id" {
   type = string
 }
+variable "cluster_nodes_sg" {
+  type = string
+}
 variable "yaw_public_key" {
+  type = string
+}
+variable "yaw_priv_key" {
   type = string
 }
 variable "postgres_user" {

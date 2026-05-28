@@ -1,8 +1,35 @@
+# Cluster-wide SSH security group
+resource "aws_security_group" "cluster_nodes_sg" {
+  name        = "DevOpsWiKi Cluster Nodes SG"
+  description = "Allow intra-cluster SSH"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "Allow SSH from any cluster node"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    self        = true
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "DevOpsWiKi Cluster Nodes SG"
+  }
+}
+
 # control plane security group
 resource "aws_security_group" "testbed-cp-sg" {
   name        = "DevOpsWiKi Testbed Control Plane SG"
   description = "Control Plane SG"
   vpc_id      = var.vpc_id
+
   ingress {
     description = "etcd server for control plane only"
     from_port   = 2379
@@ -10,11 +37,16 @@ resource "aws_security_group" "testbed-cp-sg" {
     protocol    = "tcp"
     self        = true
   }
+
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "DevOpsWiKi Testbed Control Plane SG"
   }
 }
 
@@ -23,6 +55,7 @@ resource "aws_security_group" "testbed-fe-worker-node-sg" {
   name        = "DevOpsWiKi Testbed FE Worker Node SG"
   description = "Frontend Worker Node Security group definitions"
   vpc_id      = var.vpc_id
+
   ingress {
     description = "SSH from external"
     from_port   = 22
@@ -44,6 +77,7 @@ resource "aws_security_group" "testbed-fe-worker-node-sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -61,7 +95,7 @@ resource "aws_security_group" "testbed-be-worker-node-sg" {
   name        = "DevOpsWiKi Testbed BE Worker Node SG"
   description = "Backend worker node security group definitions"
   vpc_id      = var.vpc_id
-  # allow all outbound via NAT
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -74,7 +108,7 @@ resource "aws_security_group" "testbed-be-worker-node-sg" {
   }
 }
 
-# cross-SG rules, these are created seperately to avoid cylces
+# cross-SG rules, these are created separately to avoid cycles
 
 # allow kube-apiserver on control-plane from frontend
 resource "aws_security_group_rule" "cp_allow_kube_apiserver_from_fe" {
@@ -96,28 +130,6 @@ resource "aws_security_group_rule" "cp_allow_kube_apiserver_from_be" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.testbed-cp-sg.id
   source_security_group_id = aws_security_group.testbed-be-worker-node-sg.id
-}
-
-# allow SSH to control plane from frontend worker node
-resource "aws_security_group_rule" "cp_allow_ssh_from_fe" {
-  type                     = "ingress"
-  description              = "Allow SSH to the control plane from the frontend worker node"
-  from_port                = 22
-  to_port                  = 22
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.testbed-cp-sg.id
-  source_security_group_id = aws_security_group.testbed-fe-worker-node-sg.id
-}
-
-# allow SSH to backend worker node from frontend worker node
-resource "aws_security_group_rule" "be_allow_ssh_from_fe" {
-  type                     = "ingress"
-  description              = "Allow SSH to the backend worker node from the frontend worker node"
-  from_port                = 22
-  to_port                  = 22
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.testbed-be-worker-node-sg.id
-  source_security_group_id = aws_security_group.testbed-fe-worker-node-sg.id
 }
 
 # allow kubelet on workers from control plane

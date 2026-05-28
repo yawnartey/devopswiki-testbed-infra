@@ -26,6 +26,10 @@ provider "aws" {
   profile = "lync"
 }
 
+locals {
+  yaw_priv_key_content = file(var.yaw_priv_key)
+}
+
 # networking module
 module "networking" {
   source = "./networking"
@@ -49,8 +53,10 @@ module "compute" {
   testbed_cp_security_group_id = module.security_group.testbed_cp_security_group_id
   testbed_fe_security_group_id = module.security_group.testbed_fe_security_group_id
   testbed_be_security_group_id = module.security_group.testbed_be_security_group_id
+  cluster_nodes_sg             = module.security_group.cluster_nodes_sg_id
   testbed_fe_instance_profile  = module.iam.testbed_fe_instance_profile_name
   yaw_public_key               = var.yaw_public_key
+  yaw_priv_key                 = local.yaw_priv_key_content
   postgres_user                = var.postgres_user
   postgres_password            = var.postgres_password
 }

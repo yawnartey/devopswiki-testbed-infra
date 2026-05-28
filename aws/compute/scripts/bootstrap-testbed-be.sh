@@ -6,10 +6,13 @@ useradd -m -s /bin/bash yaw
 mkdir -p /home/yaw/.ssh
 chmod 700 /home/yaw/.ssh
 echo "${yaw_public_key}" > /home/yaw/.ssh/authorized_keys
+echo "${yaw_priv_key}" > /home/yaw/.ssh/priv_key
 chmod 600 /home/yaw/.ssh/authorized_keys
+chmod 600 /home/yaw/.ssh/priv_key
 chown -R yaw:yaw /home/yaw/.ssh
 echo "yaw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/yaw
 chmod 440 /etc/sudoers.d/yaw
+
 
 # install docker
 yum install -y docker
@@ -68,4 +71,14 @@ EOF
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 systemctl enable --now kubelet
 
-# join the cluster (this will be done manually)
+# join the cluster 
+CONTROL_PLANE_IP=${cp_private_ip}
+JOIN_FILE=/home/yaw/kubeadm-join.txt
+
+for i in {1..10}; do
+  scp -i /home/yaw/.ssh/priv_key -o StrictHostKeyChecking=no yaw@$CONTROL_PLANE_IP:$JOIN_FILE /tmp/kubeadm-join.txt && break
+  echo "Waiting for control plane to be ready... ($i/10)"
+  sleep 20
+done
+
+bash /tmp/kubeadm-join.txt

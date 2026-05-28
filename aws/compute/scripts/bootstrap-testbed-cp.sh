@@ -72,6 +72,7 @@ systemctl enable --now kubelet
 PRIVATE_IP=$(ip route get 1.2.3.4 | awk '{print $7}')
 kubeadm init --apiserver-advertise-address=$PRIVATE_IP --pod-network-cidr=192.168.0.0/16 | tee /root/kubeadm-init.log
 grep -A2 "kubeadm join" /root/kubeadm-init.log > /root/kubeadm-join.txt
+cp /root/kubeadm-join.txt /home/yaw/kubeadm-join.txt && chown yaw:yaw /home/yaw/kubeadm-join.txt
 
 # configure kubectl for yaw/root user
 mkdir -p /home/yaw/.kube
