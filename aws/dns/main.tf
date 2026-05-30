@@ -1,4 +1,4 @@
-# use existing hosted zone
+# reference the existing hosted zone
 data "aws_route53_zone" "devopswiki-hosted-zone" {
   name         = "devopswiki.info"
   private_zone = false
