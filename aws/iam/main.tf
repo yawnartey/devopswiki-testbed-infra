@@ -1,3 +1,5 @@
+# this role is needed to copy let's encrypt certificate to s3 bukect and retrieve the ceritificate from there
+
 # iam role for frontend ec2
 resource "aws_iam_role" "testbed_fe_instance_role" {
   name = "devopswiki-testbed-fe-instance-role"
@@ -23,8 +25,8 @@ resource "aws_iam_role_policy" "testbed_fe_s3_policy" {
       Effect = "Allow"
       Action = ["s3:GetObject", "s3:PutObject", "s3:ListBucket"]
       Resource = [
-        "arn:aws:s3:::devopswiki-testbed-letsencrypt-8daccc39b5d2c2e9",
-        "arn:aws:s3:::devopswiki-testbed-letsencrypt-8daccc39b5d2c2e9/*"
+        "arn:aws:s3:::devops-wiki-letsencrypt-c9123c3a736c3547",
+        "arn:aws:s3:::devops-wiki-letsencrypt-c9123c3a736c3547/*"
       ]
     }]
   })

@@ -21,13 +21,13 @@ usermod -aG docker yaw
 yum install -y certbot
 
 # try copy certbot from bucket first 
-aws s3 cp s3://devopswiki-testbed-letsencrypt-8daccc39b5d2c2e9/letsencrypt /etc/letsencrypt --recursive 2>/dev/null
+aws s3 cp s3://devops-wiki-letsencrypt-c9123c3a736c3547/testbed/letsencrypt /etc/letsencrypt --recursive 2>/dev/null
 
 #run certbot if the file does not exist
 if [ ! -f /etc/letsencrypt/live/test.devopswiki.info/fullchain.pem ]; then
   certbot certonly --standalone -d test.devopswiki.info \
     --non-interactive --agree-tos --email yawenochnartey@gmail.com
-  aws s3 cp /etc/letsencrypt s3://devopswiki-testbed-letsencrypt-8daccc39b5d2c2e9/letsencrypt --recursive
+  aws s3 cp /etc/letsencrypt s3://devopswiki-testbed-letsencrypt-8daccc39b5d2c2e9/testbed/letsencrypt --recursive
 fi
 
 # write env file for nginx

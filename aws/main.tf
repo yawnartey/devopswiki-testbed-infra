@@ -12,9 +12,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "devopswiki-testbed-tf-state-bucket-8daccc39b5d2c2e9"
-    key          = "state/terraform.tfstate"
-    region       = "eu-west-3"
+    bucket       = "devops-wiki-tf-state-bucket-c9123c3a736c3547"
+    key          = "infrastructure-testbed/terraform.tfstate"
+    region       = "eu-central-1"
     encrypt      = true
     use_lockfile = true
     profile      = "lync"
@@ -50,11 +50,8 @@ module "compute" {
   testbed_be_security_group_id = module.security_group.testbed_be_security_group_id
   testbed_fe_instance_profile  = module.iam.testbed_fe_instance_profile_name
   yaw_public_key               = var.yaw_public_key
-  # github_token                 = var.github_token
   postgres_user                = var.postgres_user
   postgres_password            = var.postgres_password
-  # dockerhub_username           = var.dockerhub_username
-  # dockerhub_password           = var.dockerhub_password
 }
 
 # dns module
