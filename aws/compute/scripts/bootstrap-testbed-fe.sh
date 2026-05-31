@@ -27,7 +27,7 @@ aws s3 cp s3://devops-wiki-letsencrypt-c9123c3a736c3547/testbed/letsencrypt /etc
 if [ ! -f /etc/letsencrypt/live/test.devopswiki.info/fullchain.pem ]; then
   certbot certonly --standalone -d test.devopswiki.info \
     --non-interactive --agree-tos --email yawenochnartey@gmail.com
-  aws s3 cp /etc/letsencrypt s3://devopswiki-testbed-letsencrypt-8daccc39b5d2c2e9/testbed/letsencrypt --recursive
+  aws s3 cp /etc/letsencrypt s3://devops-wiki-letsencrypt-c9123c3a736c3547/testbed/letsencrypt --recursive
 fi
 
 # write env file for nginx
@@ -44,4 +44,6 @@ curl -SL https://github.com/docker/compose/releases/latest/download/docker-compo
 chmod +x /usr/local/bin/docker-compose
 
 # set up certbot auto-renewal
+yum install -y cronie
+systemctl enable --now crond
 echo "0 3 * * * certbot renew --quiet && /usr/local/bin/docker-compose -f /opt/app/docker-compose.yml restart frontend" | crontab -
