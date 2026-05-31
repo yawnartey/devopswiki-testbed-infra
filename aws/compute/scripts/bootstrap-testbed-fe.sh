@@ -44,5 +44,6 @@ curl -SL https://github.com/docker/compose/releases/latest/download/docker-compo
 chmod +x /usr/local/bin/docker-compose
 
 # set up certbot auto-renewal
-yum install cronie
+yum install -y cronie
+systemctl enable --now crond
 echo "0 3 * * * certbot renew --quiet && /usr/local/bin/docker-compose -f /opt/app/docker-compose.yml restart frontend" | crontab -
