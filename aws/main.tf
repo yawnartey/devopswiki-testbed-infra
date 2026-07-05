@@ -56,6 +56,6 @@ module "compute" {
 
 # dns module
 module "dns" {
-  source         = "./dns"
-  testbed_fe_eip = module.compute.testbed_fe_eip
+  source               = "./dns"
+  testbed_fe_public_ip = module.compute.testbed_fe_public_ip
 }

@@ -26,33 +26,33 @@ resource "aws_subnet" "testbed-fe-subnet" {
   }
 }
 
-# backend private subnet
+# backend private subnet. this now has been change to public for now
 resource "aws_subnet" "testbed-be-subnet" {
   vpc_id                  = aws_vpc.devopswiki-testbed-vpc.id
   cidr_block              = "10.0.2.0/24"
   availability_zone       = "eu-west-3b"
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true
   tags = {
     Name = "DevOpsWiKi Testbed BE Subnet"
   }
 }
 
-# elastic ip for nat gateway 
-resource "aws_eip" "devopswiki-testbed-nat-eip" {
-  domain = "vpc"
-  tags = {
-    Name = "DevOpsWiKi Testbed NAT EIP"
-  }
-}
+# elastic ip for nat gateway [removing this to cut cost]
+# resource "aws_eip" "devopswiki-testbed-nat-eip" {
+#   domain = "vpc"
+#   tags = {
+#     Name = "DevOpsWiKi Testbed NAT EIP"
+#   }
+# }
 
-# nat gateway - in testbed-fe-subnet for testbed-be-subnet outbound internet
-resource "aws_nat_gateway" "devopswiki-testbed-nat" {
-  allocation_id = aws_eip.devopswiki-testbed-nat-eip.id
-  subnet_id     = aws_subnet.testbed-fe-subnet.id
-  tags = {
-    Name = "DevOpsWiKi Testbed NAT"
-  }
-}
+# nat gateway - in testbed-fe-subnet for testbed-be-subnet outbound internet [removing this to cut cost]
+# resource "aws_nat_gateway" "devopswiki-testbed-nat" {
+#   allocation_id = aws_eip.devopswiki-testbed-nat-eip.id
+#   subnet_id     = aws_subnet.testbed-fe-subnet.id
+#   tags = {
+#     Name = "DevOpsWiKi Testbed NAT"
+#   }
+# }
 
 # public route table for testbed-fe-subnet
 resource "aws_route_table" "testbed-fe-route-table" {
@@ -66,12 +66,12 @@ resource "aws_route_table" "testbed-fe-route-table" {
   }
 }
 
-# private route table for testbed-be-subnet
+# private route table for testbed-be-subnet, this now has been changed to public for the time being
 resource "aws_route_table" "testbed-be-route-table" {
   vpc_id = aws_vpc.devopswiki-testbed-vpc.id
   route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.devopswiki-testbed-nat.id
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.devopswiki-testbed-igw.id
   }
   tags = {
     Name = "DevOpsWiKi Testbed BE RT"
@@ -84,7 +84,7 @@ resource "aws_route_table_association" "testbed-fe-rt-association" {
   route_table_id = aws_route_table.testbed-fe-route-table.id
 }
 
-# testbed-be-subnet association to private route table
+# testbed-be-subnet association to private route table (private route table has now been made public)
 resource "aws_route_table_association" "testbed-be-rt-association" {
   subnet_id      = aws_subnet.testbed-be-subnet.id
   route_table_id = aws_route_table.testbed-be-route-table.id
