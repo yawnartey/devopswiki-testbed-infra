@@ -10,5 +10,5 @@ resource "aws_route53_record" "devopswiki-test-dns-record" {
   name    = "test.devopswiki.info"
   type    = "A"
   ttl     = "300"
-  records = [var.testbed_fe_eip]
+  records = [var.testbed_fe_public_ip]
 }

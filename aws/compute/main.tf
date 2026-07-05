@@ -32,9 +32,9 @@ resource "aws_instance" "devopswiki-testbed-be" {
   }
 }
 
-# frontend eip
-resource "aws_eip" "devopswiki-testbed-fe-eip" {
-  domain   = "vpc"
-  instance = aws_instance.devopswiki-testbed-fe.id
-  tags     = { Name = "DevOpsWiKi Testbed FE EIP" }
-}
+# frontend eip. has been removed to save cost
+# resource "aws_eip" "devopswiki-testbed-fe-eip" {
+#   domain   = "vpc"
+#   instance = aws_instance.devopswiki-testbed-fe.id
+#   tags     = { Name = "DevOpsWiKi Testbed FE EIP" }
+# }
