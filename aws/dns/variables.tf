@@ -1,4 +1,4 @@
-variable "testbed_fe_eip" {
-  description = "Frontend instance Elastic IP"
+variable "testbed_fe_public_ip" {
+  description = "Frontend instance Public IP"
   type        = string
 }
