@@ -16,6 +16,6 @@ variable "postgres_user" {
 variable "postgres_password" {
   type = string
 }
-variable "testbed_fe_instance_profile" {
+variable "testbed_instance_profile_name" {
   type = string
 }
