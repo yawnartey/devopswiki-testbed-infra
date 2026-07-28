@@ -32,6 +32,21 @@ resource "aws_iam_role_policy" "testbed_fe_s3_policy" {
   })
 }
 
+# ssm policy to allow uploading of files to aws ssm parameter store
+resource "aws_iam_role_policy" "testbed_fe_ssm_policy" {
+  name = "devopswiki-testbed-fe-ssm-policy"
+  role = aws_iam_role.testbed_fe_instance_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["ssm:GetParameter", "ssm:GetParameters"]
+      Resource = "arn:aws:ssm:eu-west-3:*:parameter/devopswiki/*"
+    }]
+  })
+}
+
 # instance profile to attach the role to the ec2
 resource "aws_iam_instance_profile" "testbed_fe_instance_profile" {
   name = "devopswiki-testbed-fe-instance-profile"
