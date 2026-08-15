@@ -3,14 +3,14 @@ set -x
 yum install -y ansible-core git
 
 # checkout the playbooks
-git clone -b dev https://github.com/yawnartey/devopswiki-ansible.git /tmp/devopswiki-ansible
+git clone -b dev https://github.com/yawnartey/devopswiki-ansible.git /opt/devopswiki-ansible
 
 # install base components
-ansible-galaxy collection install -r /tmp/devopswiki-ansible/base-components/requirements.yml
+ansible-galaxy collection install -r /opt/devopswiki-ansible/base-components/requirements.yml
 
 # run the playbook
-ansible-playbook /tmp/devopswiki-ansible/base-components/main.yml
-ansible-playbook /tmp/devopswiki-ansible/frontend/main.yml
+ansible-playbook /opt/devopswiki-ansible/base-components/main.yml -e "region=${aws_region}"
+ansible-playbook /opt/devopswiki-ansible/frontend/main.yml -e "env=${env} domain=${domain} region=${aws_region}"
 
 # create first user access (this is being handled by ansible create_user.yml file)
 # useradd -m -s /bin/bash yaw
