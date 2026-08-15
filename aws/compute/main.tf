@@ -1,3 +1,6 @@
+# get the region
+data "aws_region" "current" {}
+
 # frontend ec2 instance
 resource "aws_instance" "devopswiki-testbed-fe" {
   ami                    = "ami-075518ffc9234909a"
@@ -6,6 +9,9 @@ resource "aws_instance" "devopswiki-testbed-fe" {
   vpc_security_group_ids = [var.testbed_fe_security_group_id]
   iam_instance_profile   = var.testbed_instance_profile_name
   user_data = templatefile("${path.module}/scripts/bootstrap-testbed-fe.sh", {
+    aws_region        = data.aws_region.current.id
+    env               = var.env
+    domain            = var.domain
     be_private_ip     = aws_instance.devopswiki-testbed-be.private_ip
     yaw_public_key    = var.yaw_public_key
     postgres_user     = var.postgres_user
@@ -24,6 +30,8 @@ resource "aws_instance" "devopswiki-testbed-be" {
   vpc_security_group_ids = [var.testbed_be_security_group_id]
   iam_instance_profile   = var.testbed_instance_profile_name
   user_data = templatefile("${path.module}/scripts/bootstrap-testbed-be.sh", {
+    aws_region        = data.aws_region.current.id
+    env               = var.env
     yaw_public_key    = var.yaw_public_key
     postgres_user     = var.postgres_user
     postgres_password = var.postgres_password
