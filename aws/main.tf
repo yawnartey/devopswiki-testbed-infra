@@ -52,6 +52,8 @@ module "compute" {
   yaw_public_key                = var.yaw_public_key
   postgres_user                 = var.postgres_user
   postgres_password             = var.postgres_password
+  env                           = var.env
+  domain                        = var.domain
 }
 
 # dns module

@@ -19,3 +19,9 @@ variable "postgres_password" {
 variable "testbed_instance_profile_name" {
   type = string
 }
+variable "env" {
+  type = string
+}
+variable "domain" {
+  type = string
+}
