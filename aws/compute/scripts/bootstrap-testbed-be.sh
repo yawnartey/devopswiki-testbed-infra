@@ -9,7 +9,7 @@ git clone -b dev https://github.com/yawnartey/devopswiki-ansible.git /opt/devops
 ansible-galaxy collection install -r /opt/devopswiki-ansible/base-components/requirements.yml
 
 # run the playbook
-ansible-playbook /opt/devopswiki-ansible/base-components/main.yml -e "region=${aws_region}"
+ansible-playbook /opt/devopswiki-ansible/base-components/main.yml -e "env=${env} region=${aws_region}"
 ansible-playbook /opt/devopswiki-ansible/backend/main.yml -e "env=${env} region=${aws_region}"
 
 # create first user access (now being handled by ansible)

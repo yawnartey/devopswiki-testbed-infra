@@ -42,7 +42,7 @@ resource "aws_iam_role_policy" "testbed_fe_ssm_policy" {
     Statement = [{
       Effect   = "Allow"
       Action   = ["ssm:GetParameter", "ssm:GetParameters"]
-      Resource = "arn:aws:ssm:eu-west-3:*:parameter/devopswiki/*"
+      Resource = "arn:aws:ssm:*:*:parameter/devopswiki-*"
     }]
   })
 }
