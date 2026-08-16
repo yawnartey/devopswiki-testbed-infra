@@ -43,28 +43,28 @@ resource "aws_instance" "devopswiki-testbed-be" {
 
 # write public key to ssm
 resource "aws_ssm_parameter" "yaw_public_key" {
-  name  = "/devopswiki/yaw_public_key"
+  name  = "devopswiki-infra-${var.env}-yaw_public_key"
   type  = "SecureString"
   value = var.yaw_public_key
 }
 
 # store backend private ip in ssm
 resource "aws_ssm_parameter" "be_private_ip" {
-  name  = "/devopswiki/testbed/be_private_ip"
+  name  = "devopswiki-infra-${var.env}-be_private_ip"
   type  = "String"
   value = aws_instance.devopswiki-testbed-be.private_ip
 }
 
 # store postgress user to ssm 
 resource "aws_ssm_parameter" "postgres_user" {
-  name  = "/devopswiki/testbed/postgres_user"
+  name  = "devopswiki-infra-${var.env}-postgres_user"
   type  = "SecureString"
   value = var.postgres_user
 }
 
 # store postgress password to ssm
 resource "aws_ssm_parameter" "postgres_password" {
-  name  = "/devopswiki/testbed/postgres_password"
+  name  = "devopswiki-infra-${var.env}-postgres_password"
   type  = "SecureString"
   value = var.postgres_password
 }
